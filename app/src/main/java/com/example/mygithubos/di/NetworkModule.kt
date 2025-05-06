@@ -1,6 +1,7 @@
 package com.example.mygithubos.di
 
 import com.example.mygithubos.data.api.GitHubApi
+import com.example.mygithubos.data.auth.GitHubOAuthService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,5 +40,16 @@ object NetworkModule {
     @Singleton
     fun provideGitHubApi(retrofit: Retrofit): GitHubApi {
         return retrofit.create(GitHubApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGitHubOAuthService(okHttpClient: OkHttpClient): GitHubOAuthService {
+        return Retrofit.Builder()
+            .baseUrl("https://github.com/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(GitHubOAuthService::class.java)
     }
 } 
