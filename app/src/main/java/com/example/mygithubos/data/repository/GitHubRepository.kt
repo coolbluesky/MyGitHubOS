@@ -1,9 +1,8 @@
-package com.example.mygithubos.domain.repository
+package com.example.mygithubos.data.repository
 
 import com.example.mygithubos.data.model.Repository
 import com.example.mygithubos.data.model.SearchResponse
 import com.example.mygithubos.data.model.User
-import kotlinx.coroutines.flow.Flow
 
 interface GitHubRepository {
     suspend fun searchRepositories(
@@ -24,9 +23,4 @@ interface GitHubRepository {
     fun isAuthenticated(): Boolean
 
     fun getAuthToken(): String?
-
-    suspend fun getUserRepositories(
-        page: Int = 1,
-        perPage: Int = 30
-    ): List<Repository>
 } 

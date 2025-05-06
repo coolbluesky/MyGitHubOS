@@ -4,6 +4,7 @@ import com.example.mygithubos.data.model.Repository
 import com.example.mygithubos.data.model.SearchResponse
 import com.example.mygithubos.data.model.User
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -11,6 +12,7 @@ interface GitHubApi {
     @GET("search/repositories")
     suspend fun searchRepositories(
         @Query("q") query: String,
+        @Query("language") language: String? = null,
         @Query("sort") sort: String = "stars",
         @Query("order") order: String = "desc",
         @Query("page") page: Int = 1,
@@ -24,7 +26,9 @@ interface GitHubApi {
     ): Repository
 
     @GET("user")
-    suspend fun getCurrentUser(): User
+    suspend fun getCurrentUser(
+        @Header("Authorization") token: String? = null
+    ): User
 
     @GET("user/repos")
     suspend fun getUserRepositories(

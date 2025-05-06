@@ -1,20 +1,23 @@
 package com.example.mygithubos.di
 
+import com.example.mygithubos.data.api.GitHubApi
 import com.example.mygithubos.data.repository.GitHubRepositoryImpl
 import com.example.mygithubos.domain.repository.GitHubRepository
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
+object RepositoryModule {
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindGitHubRepository(
-        repositoryImpl: GitHubRepositoryImpl
-    ): GitHubRepository
+    fun provideGitHubRepository(
+        api: GitHubApi
+    ): GitHubRepository {
+        return GitHubRepositoryImpl(api)
+    }
 } 
