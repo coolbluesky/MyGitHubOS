@@ -7,15 +7,18 @@ data class Repository(
     val name: String,
     @SerializedName("full_name")
     val fullName: String,
-    val owner: User,
     val description: String?,
+    val owner: User,
     @SerializedName("stargazers_count")
-    val stars: Int,
+    val stargazersCount: Int,
+    @SerializedName("watchers_count")
+    val watchersCount: Int,
     @SerializedName("forks_count")
-    val forks: Int,
+    val forksCount: Int,
     val language: String?,
     @SerializedName("html_url")
     val htmlUrl: String,
     @SerializedName("default_branch")
-    val defaultBranch: String
+    val defaultBranch: String,
+    val topics: List<String> = emptyList()
 ) 
