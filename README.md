@@ -1,10 +1,17 @@
 # MyGithubOS
 
 一个基于 GitHub API 的简单Android 应用
+<div style="display: flex; justify-content: space-around;">
+    <img src="attachment/img_popular.png" alt="热门tab" style="width: 30%;">
+    <img src="attachment/img_search.png" alt="搜索tab" style="width: 30%;">
+    <img src="attachment/img_profile.png" alt="个人信息tab" style="width: 30%;">
+</div>
 
-![示例图片](attachment/img_popular.png)
-![示例图片](attachment/img_search.png)
-![示例图片](attachment/img_profile.png)
+<div style="display: flex; justify-content: space-around;">
+    <img src="attachment/img_detail.png" alt="热门tab" style="width: 30%;">
+    <img src="attachment/img_issue.png" alt="搜索tab" style="width: 30%;">
+    <p  style="width: 30%;"/>
+</div>
 
 ## 功能特性
 
@@ -15,11 +22,10 @@
 - 查看仓库详情
 - 创建 Issue
 
-
 ## 技术栈
 
 - **语言**: Kotlin
-- **UI**: Jetpack Compose, ViewModel
+- **UI**: Jetpack Compose, Material Design, ViewModel
 - **依赖注入**: Hilt
 - **异步处理**: Kotlin Coroutines & Flow
 - **网络请求**: Retrofit + OkHttp
@@ -62,7 +68,9 @@ app/src/main/java/com/example/mygithubos/
 - Android SDK 33
 - Gradle 8.2
 
-## apk下载
-[MyGitHubOS App](attachment/MyGitHubOSApp-debug.apk)
+## APK下载
+点击直接下载[MyGitHubOSApp-debug.apk](attachment/MyGitHubOSApp-debug.apk)
 (注意apk是一个debug签名的包)
+
+apk资源位于：attachment/MyGitHubOSApp-debug.apk
 
