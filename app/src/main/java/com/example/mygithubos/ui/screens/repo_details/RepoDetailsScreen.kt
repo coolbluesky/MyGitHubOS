@@ -3,14 +3,14 @@ package com.example.mygithubos.ui.screens.repo_details
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mygithubos.ui.components.CreateIssueDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,6 +21,11 @@ fun RepoDetailsScreen(
     viewModel: RepoDetailsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val showCreateIssueDialog by viewModel.showCreateIssueDialog.collectAsState()
+
+    LaunchedEffect(owner, repo) {
+        viewModel.loadRepositoryDetails(owner, repo)
+    }
 
     Scaffold(
         topBar = {
@@ -58,17 +63,28 @@ fun RepoDetailsScreen(
                 uiState.repository != null -> {
                     RepositoryDetails(
                         repository = uiState.repository!!,
+                        onCreateIssue = { viewModel.showCreateIssueDialog() },
                         modifier = Modifier.fillMaxSize()
                     )
                 }
             }
         }
     }
+
+    if (showCreateIssueDialog) {
+        CreateIssueDialog(
+            onDismiss = { viewModel.hideCreateIssueDialog() },
+            onCreateIssue = { title, body ->
+                viewModel.createIssue(title, body)
+            }
+        )
+    }
 }
 
 @Composable
 private fun RepositoryDetails(
     repository: com.example.mygithubos.data.model.Repository,
+    onCreateIssue: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -120,6 +136,19 @@ private fun RepositoryDetails(
                     )
                 }
             }
+        }
+
+        Button(
+            onClick = onCreateIssue,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                imageVector = Icons.Default.BugReport,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize)
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text("Create Issue")
         }
     }
 }

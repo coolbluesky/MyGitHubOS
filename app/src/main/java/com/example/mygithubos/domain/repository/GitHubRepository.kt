@@ -1,5 +1,7 @@
 package com.example.mygithubos.domain.repository
 
+import com.example.mygithubos.data.model.IssueRequest
+import com.example.mygithubos.data.model.IssueResponse
 import com.example.mygithubos.data.model.Repository
 import com.example.mygithubos.data.model.SearchResponse
 import com.example.mygithubos.data.model.User
@@ -31,4 +33,6 @@ interface GitHubRepository {
     ): List<Repository>
 
     suspend fun logout()
+
+    suspend fun createIssue(owner: String, repo: String, issue: IssueRequest): IssueResponse
 } 

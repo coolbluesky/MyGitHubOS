@@ -5,6 +5,8 @@ import android.util.Log
 import com.example.mygithubos.data.api.GitHubApi
 import com.example.mygithubos.data.auth.GitHubOAuthService
 import com.example.mygithubos.data.local.SecureStorage
+import com.example.mygithubos.data.model.IssueRequest
+import com.example.mygithubos.data.model.IssueResponse
 import com.example.mygithubos.data.model.Repository
 import com.example.mygithubos.data.model.SearchResponse
 import com.example.mygithubos.data.model.User
@@ -142,5 +144,16 @@ class GitHubRepositoryImpl @Inject constructor(
         _isAuthenticated.value = false
         authToken = null
         secureStorage.remove(KEY_AUTH_TOKEN)
+    }
+
+    override suspend fun createIssue(owner: String, repo: String, issue: IssueRequest): IssueResponse {
+        val token = authToken ?: throw IllegalStateException("Not authenticated")
+        Log.i(TAG, "Creating issue in $owner/$repo")
+        return try {
+            api.createIssue("Bearer $token", owner, repo, issue)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error creating issue: ${e.message}", e)
+            throw e
+        }
     }
 } 
