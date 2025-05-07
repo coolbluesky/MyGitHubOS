@@ -53,6 +53,15 @@ class GitHubRepositoryImpl @Inject constructor(
         page: Int,
         perPage: Int
     ): SearchResponse {
+        if (query.isBlank()) {
+            Log.i(TAG, "Empty query, returning empty search result")
+            return SearchResponse(
+                totalCount = 0,
+                incompleteResults = false,
+                items = emptyList()
+            )
+        }
+        
         Log.i(TAG, "Searching repositories with query: $query")
         return api.searchRepositories(query, language, sort, order, page, perPage)
     }
