@@ -124,4 +124,11 @@ class GitHubRepositoryImpl @Inject constructor(
             throw e
         }
     }
+
+    override suspend fun logout() {
+        Log.i(TAG, "Logging out user")
+        _isAuthenticated.value = false
+        authToken = null
+        prefs.edit().remove(KEY_AUTH_TOKEN).apply()
+    }
 } 
