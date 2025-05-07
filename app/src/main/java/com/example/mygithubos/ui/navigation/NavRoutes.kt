@@ -1,4 +1,4 @@
-package com.example.mygithubos.navigation
+package com.example.mygithubos.ui.navigation
 
 object NavRoutes {
     const val HOME = "home"

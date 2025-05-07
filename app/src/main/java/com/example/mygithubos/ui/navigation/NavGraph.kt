@@ -1,4 +1,4 @@
-package com.example.mygithubos.navigation
+package com.example.mygithubos.ui.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable

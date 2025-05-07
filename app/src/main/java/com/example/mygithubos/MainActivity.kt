@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.mygithubos.domain.repository.GitHubRepository
-import com.example.mygithubos.navigation.NavGraph
+import com.example.mygithubos.ui.navigation.NavGraph
 import com.example.mygithubos.ui.theme.MyGithubOSTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
