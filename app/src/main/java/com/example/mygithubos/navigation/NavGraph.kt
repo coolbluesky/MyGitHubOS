@@ -6,13 +6,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.example.mygithubos.domain.repository.GitHubRepository
-import com.example.mygithubos.ui.screens.home.HomeScreen
 import com.example.mygithubos.ui.screens.login.LoginScreen
+import com.example.mygithubos.ui.screens.main.MainScreen
 import com.example.mygithubos.ui.screens.repo_details.RepoDetailsScreen
 import com.example.mygithubos.ui.screens.search.SearchScreen
 import com.example.mygithubos.ui.screens.user_profile.UserProfileScreen
@@ -39,8 +37,12 @@ fun NavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = if (isAuthenticated) "search" else "login"
+        startDestination = if (isAuthenticated) "main" else "login"
     ) {
+        composable("main") {
+            MainScreen(navController = navController)
+        }
+
         composable("search") {
             SearchScreen(
                 onRepositoryClick = { owner, repo ->
@@ -67,8 +69,8 @@ fun NavGraph(
         composable("login") {
             LoginScreen(
                 onLoginSuccess = {
-                    navController.navigate("user_profile") {
-                        popUpTo("search") { inclusive = true }
+                    navController.navigate("main") {
+                        popUpTo("login") { inclusive = true }
                     }
                 }
             )
