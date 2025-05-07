@@ -1,5 +1,6 @@
 package com.example.mygithubos.ui.screens.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mygithubos.data.auth.GitHubOAuthConfig
@@ -9,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +20,8 @@ data class LoginUiState(
     val authUrl: String = "${GitHubOAuthConfig.AUTH_URL}?" +
             "client_id=${GitHubOAuthConfig.CLIENT_ID}&" +
             "redirect_uri=${GitHubOAuthConfig.REDIRECT_URI}&" +
-            "scope=${GitHubOAuthConfig.SCOPE}"
+            "scope=${GitHubOAuthConfig.SCOPE}",
+    val isLoggedIn: Boolean = false
 )
 
 @HiltViewModel
@@ -27,26 +30,68 @@ class LoginViewModel @Inject constructor(
     private val oAuthService: GitHubOAuthService
 ) : ViewModel() {
 
+    companion object {
+        private const val TAG = "LoginViewModel"
+    }
+
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     fun handleOAuthCallback(code: String) {
+        Log.i(TAG, "Handling OAuth callback with code: ${code.take(10)}...")
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            _uiState.update { it.copy(isLoading = true, error = null) }
             try {
+                Log.i(TAG, "Getting access token...")
                 val response = oAuthService.getAccessToken(
                     clientId = GitHubOAuthConfig.CLIENT_ID,
                     clientSecret = GitHubOAuthConfig.CLIENT_SECRET,
                     code = code,
                     redirectUri = GitHubOAuthConfig.REDIRECT_URI
                 )
-                repository.login(response.access_token)
-                _uiState.value = _uiState.value.copy(isLoading = false)
+                Log.i(TAG, "Received access token response: ${response.access_token.take(10)}...")
+                
+                if (response.access_token.isNotEmpty()) {
+                    try {
+                        Log.i(TAG, "Attempting to login with repository...")
+                        repository.login(response.access_token)
+                        Log.i(TAG, "Login successful")
+                        _uiState.update { 
+                            it.copy(
+                                isLoading = false,
+                                isLoggedIn = true,
+                                error = null
+                            )
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Repository login failed: ${e.message}", e)
+                        _uiState.update { 
+                            it.copy(
+                                isLoading = false,
+                                isLoggedIn = false,
+                                error = "Failed to login: ${e.message}"
+                            )
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Access token is empty")
+                    _uiState.update { 
+                        it.copy(
+                            isLoading = false,
+                            isLoggedIn = false,
+                            error = "Failed to get access token"
+                        )
+                    }
+                }
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = e.message ?: "Login failed"
-                )
+                Log.e(TAG, "OAuth process failed: ${e.message}", e)
+                _uiState.update { 
+                    it.copy(
+                        isLoading = false,
+                        isLoggedIn = false,
+                        error = e.message ?: "Login failed"
+                    )
+                }
             }
         }
     }

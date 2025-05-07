@@ -12,11 +12,11 @@ interface GitHubApi {
     @GET("search/repositories")
     suspend fun searchRepositories(
         @Query("q") query: String,
-        @Query("language") language: String? = null,
-        @Query("sort") sort: String = "stars",
-        @Query("order") order: String = "desc",
-        @Query("page") page: Int = 1,
-        @Query("per_page") perPage: Int = 30
+        @Query("language") language: String?,
+        @Query("sort") sort: String,
+        @Query("order") order: String,
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int
     ): SearchResponse
 
     @GET("repos/{owner}/{repo}")
@@ -27,12 +27,13 @@ interface GitHubApi {
 
     @GET("user")
     suspend fun getCurrentUser(
-        @Header("Authorization") token: String? = null
+        @Header("Authorization") token: String
     ): User
 
     @GET("user/repos")
     suspend fun getUserRepositories(
-        @Query("page") page: Int = 1,
-        @Query("per_page") perPage: Int = 30
+        @Header("Authorization") token: String,
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int
     ): List<Repository>
 } 

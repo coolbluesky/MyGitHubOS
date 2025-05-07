@@ -28,25 +28,20 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideGitHubApi(okHttpClient: OkHttpClient): GitHubApi {
         return Retrofit.Builder()
             .baseUrl("https://api.github.com/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideGitHubApi(retrofit: Retrofit): GitHubApi {
-        return retrofit.create(GitHubApi::class.java)
+            .create(GitHubApi::class.java)
     }
 
     @Provides
     @Singleton
     fun provideGitHubOAuthService(okHttpClient: OkHttpClient): GitHubOAuthService {
         return Retrofit.Builder()
-            .baseUrl("https://github.com/")
+            .baseUrl("https://github.com/login/oauth/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
