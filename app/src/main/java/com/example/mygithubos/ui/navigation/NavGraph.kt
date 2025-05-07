@@ -26,18 +26,9 @@ fun NavGraph(
     
     Log.d(TAG, "Current authentication state: $isAuthenticated")
 
-    LaunchedEffect(isAuthenticated) {
-        Log.d(TAG, "Authentication state changed: $isAuthenticated")
-        if (!isAuthenticated) {
-            navController.navigate("login") {
-                popUpTo("search") { inclusive = true }
-            }
-        }
-    }
-
     NavHost(
         navController = navController,
-        startDestination = if (isAuthenticated) "main" else "login"
+        startDestination = "main"
     ) {
         composable("main") {
             MainScreen(navController = navController)
@@ -49,7 +40,11 @@ fun NavGraph(
                     navController.navigate("repository_detail/$owner/$repo")
                 },
                 onProfileClick = {
-                    navController.navigate("user_profile")
+                    if (isAuthenticated) {
+                        navController.navigate("user_profile")
+                    } else {
+                        navController.navigate("login")
+                    }
                 }
             )
         }
@@ -69,17 +64,19 @@ fun NavGraph(
         composable("login") {
             LoginScreen(
                 onLoginSuccess = {
-                    navController.navigate("main") {
-                        popUpTo("login") { inclusive = true }
-                    }
+                    navController.navigateUp()
                 }
             )
         }
 
         composable("user_profile") {
-            UserProfileScreen(
-                navController = navController
-            )
+            if (isAuthenticated) {
+                UserProfileScreen(
+                    navController = navController
+                )
+            } else {
+                navController.navigate("login")
+            }
         }
     }
 } 
