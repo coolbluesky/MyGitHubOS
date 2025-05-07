@@ -3,6 +3,7 @@ package com.example.mygithubos.di
 import android.content.Context
 import com.example.mygithubos.data.api.GitHubApi
 import com.example.mygithubos.data.auth.GitHubOAuthService
+import com.example.mygithubos.data.local.SecureStorage
 import com.example.mygithubos.data.repository.GitHubRepositoryImpl
 import com.example.mygithubos.domain.repository.GitHubRepository
 import dagger.Module
@@ -18,11 +19,20 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideSecureStorage(
+        @ApplicationContext context: Context
+    ): SecureStorage {
+        return SecureStorage(context)
+    }
+
+    @Provides
+    @Singleton
     fun provideGitHubRepository(
         api: GitHubApi,
         oauthService: GitHubOAuthService,
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        secureStorage: SecureStorage
     ): GitHubRepository {
-        return GitHubRepositoryImpl(api, oauthService, context)
+        return GitHubRepositoryImpl(api, oauthService, context, secureStorage)
     }
 } 
