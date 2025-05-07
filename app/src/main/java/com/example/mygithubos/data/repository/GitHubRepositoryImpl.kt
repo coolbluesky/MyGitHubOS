@@ -1,18 +1,24 @@
 package com.example.mygithubos.data.repository
 
 import com.example.mygithubos.data.api.GitHubApi
+import com.example.mygithubos.data.auth.GitHubOAuthService
 import com.example.mygithubos.data.model.Repository
 import com.example.mygithubos.data.model.SearchResponse
 import com.example.mygithubos.data.model.User
 import com.example.mygithubos.domain.repository.GitHubRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class GitHubRepositoryImpl @Inject constructor(
-    private val api: GitHubApi
+    private val api: GitHubApi,
+    private val oauthService: GitHubOAuthService
 ) : GitHubRepository {
 
+    private val _isAuthenticated = MutableStateFlow(false)
     private var authToken: String? = null
 
     override suspend fun searchRepositories(
@@ -31,21 +37,18 @@ class GitHubRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCurrentUser(): User {
-        return api.getCurrentUser(authToken)
+        return api.getCurrentUser()
     }
 
     override suspend fun login(token: String): User {
         authToken = token
+        _isAuthenticated.value = true
         return getCurrentUser()
     }
 
-    override fun isAuthenticated(): Boolean {
-        return authToken != null
-    }
+    override fun isAuthenticated(): Flow<Boolean> = _isAuthenticated.asStateFlow()
 
-    override fun getAuthToken(): String? {
-        return authToken
-    }
+    override fun getAuthToken(): String? = authToken
 
     override suspend fun getUserRepositories(
         page: Int,

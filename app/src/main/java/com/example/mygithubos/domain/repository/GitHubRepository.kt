@@ -21,7 +21,7 @@ interface GitHubRepository {
 
     suspend fun login(token: String): User
 
-    fun isAuthenticated(): Boolean
+    fun isAuthenticated(): Flow<Boolean>
 
     fun getAuthToken(): String?
 

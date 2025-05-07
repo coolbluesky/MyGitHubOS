@@ -1,6 +1,7 @@
 package com.example.mygithubos.di
 
 import com.example.mygithubos.data.api.GitHubApi
+import com.example.mygithubos.data.auth.GitHubOAuthService
 import com.example.mygithubos.data.repository.GitHubRepositoryImpl
 import com.example.mygithubos.domain.repository.GitHubRepository
 import dagger.Module
@@ -16,8 +17,9 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideGitHubRepository(
-        api: GitHubApi
+        api: GitHubApi,
+        oauthService: GitHubOAuthService
     ): GitHubRepository {
-        return GitHubRepositoryImpl(api)
+        return GitHubRepositoryImpl(api, oauthService)
     }
 } 
