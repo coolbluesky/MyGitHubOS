@@ -3,7 +3,7 @@ package com.example.mygithubos.ui.screens.popular
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mygithubos.data.model.Repository
-import com.example.mygithubos.domain.repository.GitHubRepository
+import com.example.mygithubos.domain.usecase.SearchRepositoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PopularRepositoriesViewModel @Inject constructor(
-    private val repository: GitHubRepository
+    private val searchRepositoriesUseCase: SearchRepositoriesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<PopularRepositoriesUiState>(PopularRepositoriesUiState.Loading)
@@ -23,7 +23,7 @@ class PopularRepositoriesViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 // 搜索星标数超过 1000 的仓库，按星标数降序排序
-                val response = repository.searchRepositories(
+                val response = searchRepositoriesUseCase(
                     query = "stars:>1000",
                     sort = "stars",
                     order = "desc",

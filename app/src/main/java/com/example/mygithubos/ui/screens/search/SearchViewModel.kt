@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mygithubos.data.model.Repository
 import com.example.mygithubos.data.model.SearchResponse
-import com.example.mygithubos.domain.repository.GitHubRepository
+import com.example.mygithubos.domain.usecase.SearchRepositoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,7 +21,7 @@ enum class SortBy {
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val repository: GitHubRepository
+    private val searchRepositoriesUseCase: SearchRepositoriesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SearchUiState>(SearchUiState.Success(emptyList()))
@@ -79,7 +79,7 @@ class SearchViewModel @Inject constructor(
                     SortBy.UPDATED -> "updated"
                 }
                 val fullQuery = "$currentQuery $languageQuery sort:$sortQuery"
-                val response = repository.searchRepositories(fullQuery)
+                val response = searchRepositoriesUseCase(fullQuery)
                 _uiState.value = SearchUiState.Success(response.items)
             } catch (e: Exception) {
                 _uiState.value = SearchUiState.Error(e.message ?: "Search failed")

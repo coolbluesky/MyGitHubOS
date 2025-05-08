@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mygithubos.data.auth.GitHubOAuthConfig
 import com.example.mygithubos.data.auth.GitHubOAuthService
-import com.example.mygithubos.domain.repository.GitHubRepository
+import com.example.mygithubos.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +26,7 @@ data class LoginUiState(
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: GitHubRepository,
+    private val loginUseCase: LoginUseCase,
     private val oAuthService: GitHubOAuthService
 ) : ViewModel() {
 
@@ -53,8 +53,8 @@ class LoginViewModel @Inject constructor(
                 
                 if (response.access_token.isNotEmpty()) {
                     try {
-                        Log.i(TAG, "Attempting to login with repository...")
-                        repository.login(response.access_token)
+                        Log.i(TAG, "Attempting to login with use case...")
+                        loginUseCase(response.access_token)
                         Log.i(TAG, "Login successful")
                         _uiState.update { 
                             it.copy(
@@ -64,7 +64,7 @@ class LoginViewModel @Inject constructor(
                             )
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG, "Repository login failed: ${e.message}", e)
+                        Log.e(TAG, "Use case login failed: ${e.message}", e)
                         _uiState.update { 
                             it.copy(
                                 isLoading = false,

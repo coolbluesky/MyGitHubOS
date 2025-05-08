@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mygithubos.data.model.IssueRequest
 import com.example.mygithubos.data.model.Repository
-import com.example.mygithubos.domain.repository.GitHubRepository
+import com.example.mygithubos.domain.usecase.CreateIssueUseCase
 import com.example.mygithubos.domain.usecase.GetRepositoryDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +24,7 @@ data class RepoDetailsUiState(
 @HiltViewModel
 class RepoDetailsViewModel @Inject constructor(
     private val getRepositoryDetailsUseCase: GetRepositoryDetailsUseCase,
-    private val repository: GitHubRepository,
+    private val createIssueUseCase: CreateIssueUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -76,7 +76,7 @@ class RepoDetailsViewModel @Inject constructor(
         val repo = _uiState.value.repository ?: return
         viewModelScope.launch {
             try {
-                repository.createIssue(repo.owner.login, repo.name, IssueRequest(title, body))
+                createIssueUseCase(repo.owner.login, repo.name, IssueRequest(title, body))
                 _showCreateIssueDialog.value = false
             } catch (e: Exception) {
                 _uiState.update { 
